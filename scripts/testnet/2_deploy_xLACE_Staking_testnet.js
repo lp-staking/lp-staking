@@ -1,6 +1,6 @@
-const LovelaceStaking = artifacts.require("LovelaceStaking");
-const LovelaceMock = artifacts.require("LovelaceMock");
-const xLovelaceTokenMock = artifacts.require("xLovelaceTokenMock");
+const Staking = artifacts.require("Staking");
+const DevMock = artifacts.require("DevMock");
+const xDevTokenMock = artifacts.require("xDevTokenMock");
 
 const fromWei = web3.utils.fromWei;
 
@@ -11,30 +11,30 @@ module.exports = async (deployer, network, accounts) => {
   console.log("Address owner: ", accounts[0]);
   // console.log('deployer', deployer.address);
 
-  await deployer.deploy(LovelaceStaking);
-  const staking = await LovelaceStaking.deployed();
+  await deployer.deploy(Staking);
+  const staking = await Staking.deployed();
 
-  await deployer.deploy(LovelaceMock);
-  const lovelaceToken = await LovelaceMock.deployed();
+  await deployer.deploy(DevMock);
+  const devToken = await DevMock.deployed();
 
-  await deployer.deploy(xLovelaceTokenMock, staking.address);
-  const xLovelace = await xLovelaceTokenMock.deployed();
+  await deployer.deploy(xDevTokenMock, staking.address);
+  const xDev = await xDevTokenMock.deployed();
 
-  await lovelaceToken.mintArbitrary(accounts[0], await ether("10000"));
-  await lovelaceToken.mintArbitrary(staking.address, await ether("100000"));
+  await devToken.mintArbitrary(accounts[0], await ether("10000"));
+  await devToken.mintArbitrary(staking.address, await ether("100000"));
   await staking.initialize(
     rewardPerBlock,
-    lovelaceToken.address,
-    xLovelace.address
+    devToken.address,
+    xDev.address
   );
 
   await lovelaceToken.approve(staking.address, await ether("10000"));
   await staking.stake(await ether("100"));
 
-  console.log("Address Lovelace Staking contract: ", staking.address);
-  console.log("Address LACE Token: ", lovelaceToken.address);
-  console.log("Address xLACE Token: ", xLovelace.address);
+  console.log("Address Staking contract: ", staking.address);
+  console.log("Address DEV Token: ", devToken.address);
+  console.log("Address xDEV Token: ", xDev.address);
   console.log("Address owner: ", accounts[0]);
-  console.log("LACE: ", fromWei(await lovelaceToken.balanceOf(accounts[0])));
-  console.log("xLACE: ", fromWei(await xLovelace.balanceOf(accounts[0])));
+  console.log("DEV : ", fromWei(await devToken.balanceOf(accounts[0])));
+  console.log("xDEV: ", fromWei(await xDev.balanceOf(accounts[0])));
 };

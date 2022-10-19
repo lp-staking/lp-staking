@@ -26,16 +26,16 @@ contract LPStaking is Staking {
 		address token = address(stakingToken);
 		uint256 totalSupply = IUniswapV2Pair(token).totalSupply();
 		(uint256 reserve0, uint256 reserve1, ) = IUniswapV2Pair(token).getReserves();
-		uint256 reserveLACE = IUniswapV2Pair(token).token0() == address(rewardsToken)
+		uint256 reserveDEV = IUniswapV2Pair(token).token0() == address(rewardsToken)
 			? reserve0
 			: reserve1;
 
-		if (totalSupply == 0 || reserveLACE == 0 || block.number > lastBlockWithReward) {
+		if (totalSupply == 0 || reserveDEV == 0 || block.number > lastBlockWithReward) {
 			return 0;
 		}
 
 		APY = rewardPerBlock.mul(BLOCKS_PER_YEAR).mul(PERCENTAGE_100).div(
-			totalStaked.add(PRECISION).mul(reserveLACE.mul(2).mul(10**20).div(totalSupply))
+			totalStaked.add(PRECISION).mul(reserveDEV.mul(2).mul(10**20).div(totalSupply))
 		);
 	}
 }
